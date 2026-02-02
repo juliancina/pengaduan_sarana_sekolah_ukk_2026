@@ -1,0 +1,110 @@
+<?php
+require_once 'config/cn_database.php';
+
+class m_admin extends Database {
+
+    // 1. STATISTIK DASHBOARD
+    public function get_stats() {
+        $q1 = mysqli_num_rows(mysqli_query($this->koneksi, "SELECT * FROM tb_aspirasi WHERE status='0' OR status IS NULL"));
+        $q2 = mysqli_num_rows(mysqli_query($this->koneksi, "SELECT * FROM tb_aspirasi WHERE status='Menunggu'"));
+        $q3 = mysqli_num_rows(mysqli_query($this->koneksi, "SELECT * FROM tb_aspirasi WHERE status='Proses'"));
+        $q4 = mysqli_num_rows(mysqli_query($this->koneksi, "SELECT * FROM tb_riwayat"));
+        $q5 = mysqli_num_rows(mysqli_query($this->koneksi, "SELECT * FROM tb_siswa"));
+        
+        return ['laporan_masuk' => $q1, 'menunggu' => $q2, 'proses' => $q3, 'selesai' => $q4, 'total_siswa' => $q5];
+    }
+
+    // 2. DATA KATEGORI
+    public function get_kategori() {
+        return mysqli_query($this->koneksi, "SELECT * FROM tb_kategori");
+    }
+
+    // 3. DATA VERIFIKASI (FILTER AKTIF)
+    public function get_laporan_aktif($filter = []) {
+        $query = "SELECT 
+                    t1.id_pelaporan, t1.tgl_laporan, t1.foto, t1.ket, t1.lokasi,
+                    t3.nama, t3.nis, t3.kelas,
+                    t4.ket_kategori,
+                    COALESCE(t2.status, '0') as status,
+                    COALESCE(t2.feedback, '-') as feedback
+                  FROM tb_input_aspirasi t1
+                  LEFT JOIN tb_aspirasi t2 ON t1.id_pelaporan = t2.id_pelaporan
+                  LEFT JOIN tb_siswa t3 ON t1.nis = t3.nis
+                  LEFT JOIN tb_kategori t4 ON t1.id_kategori = t4.id_kategori
+                  WHERE 1=1"; 
+
+        if (!empty($filter['tgl_awal'])) { $query .= " AND t1.tgl_laporan >= '".$filter['tgl_awal']."'"; }
+        if (!empty($filter['tgl_akhir'])) { $query .= " AND t1.tgl_laporan <= '".$filter['tgl_akhir']."'"; }
+        if (!empty($filter['nama'])) { $query .= " AND t3.nama LIKE '%".$filter['nama']."%'"; }
+        if (!empty($filter['kategori'])) { $query .= " AND t1.id_kategori = '".$filter['kategori']."'"; }
+        
+        if (isset($filter['status']) && $filter['status'] !== '') {
+            $st = $filter['status'];
+            if ($st == '0') { $query .= " AND (t2.status = '0' OR t2.status IS NULL)"; }
+            else { $query .= " AND t2.status = '$st'"; }
+        } else {
+            $query .= " AND (t2.status != 'Selesai' OR t2.status IS NULL)";
+        }
+
+        $query .= " ORDER BY t1.tgl_laporan DESC";
+        return mysqli_query($this->koneksi, $query);
+    }
+
+    // 4. DATA RIWAYAT / CETAK (FILTER SELESAI) - [DIPAKAI UNTUK TABEL & CETAK]
+    public function get_riwayat_filter($filter = []) {
+        $query = "SELECT 
+                    r.id_riwayat, r.tgl_selesai, r.feedback,
+                    i.tgl_laporan, i.foto, i.ket, i.lokasi,
+                    s.nama, s.kelas, s.nis,
+                    k.ket_kategori
+                  FROM tb_riwayat r
+                  JOIN tb_input_aspirasi i ON r.id_pelaporan = i.id_pelaporan
+                  JOIN tb_siswa s ON i.nis = s.nis
+                  JOIN tb_kategori k ON r.id_kategori = k.id_kategori
+                  WHERE 1=1";
+
+        if (!empty($filter['tgl_awal'])) { $query .= " AND r.tgl_selesai >= '".$filter['tgl_awal']."'"; }
+        if (!empty($filter['tgl_akhir'])) { $query .= " AND r.tgl_selesai <= '".$filter['tgl_akhir']."'"; }
+        if (!empty($filter['nama'])) { $query .= " AND s.nama LIKE '%".$filter['nama']."%'"; }
+        if (!empty($filter['kategori'])) { $query .= " AND r.id_kategori = '".$filter['kategori']."'"; }
+
+        $query .= " ORDER BY r.tgl_selesai DESC";
+        return mysqli_query($this->koneksi, $query);
+    }
+
+    // 5. UPDATE TANGGAPAN
+    public function update_tanggapan($id_pelaporan, $status_baru, $feedback, $id_admin) {
+        $tgl = date('Y-m-d');
+        $id_pelaporan = mysqli_real_escape_string($this->koneksi, $id_pelaporan);
+        $status_baru  = mysqli_real_escape_string($this->koneksi, $status_baru);
+        $feedback     = mysqli_real_escape_string($this->koneksi, $feedback);
+
+        if ($status_baru == 'Selesai') {
+            $cek = mysqli_query($this->koneksi, "SELECT id_kategori FROM tb_input_aspirasi WHERE id_pelaporan='$id_pelaporan'");
+            $d = mysqli_fetch_assoc($cek);
+            $id_kat = $d['id_kategori'];
+
+            $q_insert = "INSERT INTO tb_riwayat (id_pelaporan, id_kategori, id_admin, tgl_selesai, feedback) 
+                         VALUES ('$id_pelaporan', '$id_kat', '$id_admin', '$tgl', '$feedback')";
+            
+            if (mysqli_query($this->koneksi, $q_insert)) {
+                mysqli_query($this->koneksi, "DELETE FROM tb_aspirasi WHERE id_pelaporan='$id_pelaporan'");
+                return true;
+            }
+            return false;
+        } else {
+            $cek_exist = mysqli_query($this->koneksi, "SELECT * FROM tb_aspirasi WHERE id_pelaporan='$id_pelaporan'");
+            $cek_kat = mysqli_query($this->koneksi, "SELECT id_kategori FROM tb_input_aspirasi WHERE id_pelaporan='$id_pelaporan'");
+            $dat_kat = mysqli_fetch_assoc($cek_kat);
+            $id_kategori_fix = $dat_kat['id_kategori'];
+
+            if(mysqli_num_rows($cek_exist) > 0){
+                $q = "UPDATE tb_aspirasi SET status='$status_baru', feedback='$feedback', id_admin='$id_admin', tgl_feedback='$tgl' WHERE id_pelaporan='$id_pelaporan'";
+            } else {
+                $q = "INSERT INTO tb_aspirasi (id_pelaporan, id_kategori, status, feedback, id_admin, tgl_feedback) VALUES ('$id_pelaporan', '$id_kategori_fix', '$status_baru', '$feedback', '$id_admin', '$tgl')";
+            }
+            return mysqli_query($this->koneksi, $q);
+        }
+    }
+}
+?>

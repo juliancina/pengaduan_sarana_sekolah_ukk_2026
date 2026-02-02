@@ -1,0 +1,23 @@
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Cache Gambar (JPG, PNG, GIF) - Disimpan 1 Bulan
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    
+    # Cache CSS dan JS - Disimpan 1 Minggu
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType text/javascript "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    
+    # Cache Font - Disimpan 1 Bulan
+    ExpiresByType application/font-woff "access plus 1 month"
+    ExpiresByType application/font-woff2 "access plus 1 month"
+</IfModule>
+
+# Mencegah akses folder langsung (Security tambahan)
+Options -Indexes

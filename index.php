@@ -2,40 +2,68 @@
 session_start();
 require_once 'config/cn_database.php';
 
-// Ambil parameter 'page' dari URL, default ke 'login' \\
 $page = isset($_GET['page']) ? $_GET['page'] : 'login';
 
-// Routing \\
 switch ($page) {
+    // === AUTH ===
     case 'login':
         require_once 'controllers/c_auth.php';
-        $controller = new c_auth();
-        $controller->login_view();
+        $app = new c_auth();
+        $app->login_view();
         break;
 
     case 'auth_proccess':
         require_once 'controllers/c_auth.php';
-        $controller = new c_auth();
-        $controller->login_action();
+        $app = new c_auth();
+        $app->login_action();
+        break;
+
+    case 'register':
+        require_once 'controllers/c_auth.php';
+        $app = new c_auth();
+        $app->register_view();
+        break;
+
+    case 'register_proccess':
+        require_once 'controllers/c_auth.php';
+        $app = new c_auth();
+        $app->register_action();
         break;
 
     case 'logout':
         require_once 'controllers/c_auth.php';
-        $controller = new c_auth();
-        $controller->logout();
+        $app = new c_auth();
+        $app->logout();
         break;
 
+    // === SISWA ===
+    case 'siswa_dashboard':
+    case 'home':
+    case 'akun':
+    case 'form':
+    case 'simpan': 
+    case 'riwayat':
+        require_once 'controllers/c_siswa.php';
+        $app = new c_siswa();
+        $app->index(); 
+        break;
+
+    // === ADMIN ===
     case 'admin_dashboard':
-        // Cek sesi admin (keamanan) \\
-        if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-            header("Location: index.php?page=login");
-            exit;
-        }
-        echo "<h1>Selamat Datang Admin!</h1> (Dashboard Admin akan kita buat nanti)";
+    case 'verifikasi':
+    case 'admin_riwayat':
+    case 'admin_akun':
+    case 'proses_tanggapan':
+    case 'cetak_laporan': 
+        require_once 'controllers/c_admin.php';
+        $app = new c_admin();
+        $app->index();
         break;
 
     default:
-        echo "404 - Halaman tidak ditemukan";
+        require_once 'controllers/c_auth.php';
+        $app = new c_auth();
+        $app->login_view();
         break;
 }
 ?>
