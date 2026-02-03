@@ -19,7 +19,7 @@ class m_admin extends Database {
         return mysqli_query($this->koneksi, "SELECT * FROM tb_kategori");
     }
 
-    // 3. DATA VERIFIKASI (FILTER AKTIF)
+    // 3. DATA VERIFIKASI (FILTER AKTIF & URUTAN PERBAIKAN)
     public function get_laporan_aktif($filter = []) {
         $query = "SELECT 
                     t1.id_pelaporan, t1.tgl_laporan, t1.foto, t1.ket, t1.lokasi,
@@ -33,24 +33,45 @@ class m_admin extends Database {
                   LEFT JOIN tb_kategori t4 ON t1.id_kategori = t4.id_kategori
                   WHERE 1=1"; 
 
-        if (!empty($filter['tgl_awal'])) { $query .= " AND t1.tgl_laporan >= '".$filter['tgl_awal']."'"; }
-        if (!empty($filter['tgl_akhir'])) { $query .= " AND t1.tgl_laporan <= '".$filter['tgl_akhir']."'"; }
-        if (!empty($filter['nama'])) { $query .= " AND t3.nama LIKE '%".$filter['nama']."%'"; }
-        if (!empty($filter['kategori'])) { $query .= " AND t1.id_kategori = '".$filter['kategori']."'"; }
+        // --- BAGIAN FILTER ---
+        if (!empty($filter['tgl_awal'])) { 
+            $tgl_awal = mysqli_real_escape_string($this->koneksi, $filter['tgl_awal']);
+            $query .= " AND t1.tgl_laporan >= '$tgl_awal'"; 
+        }
+        if (!empty($filter['tgl_akhir'])) { 
+            $tgl_akhir = mysqli_real_escape_string($this->koneksi, $filter['tgl_akhir']);
+            $query .= " AND t1.tgl_laporan <= '$tgl_akhir'"; 
+        }
+        if (!empty($filter['nama'])) { 
+            $nama = mysqli_real_escape_string($this->koneksi, $filter['nama']);
+            $query .= " AND t3.nama LIKE '%$nama%'"; 
+        }
+        if (!empty($filter['kategori'])) { 
+            $kat = mysqli_real_escape_string($this->koneksi, $filter['kategori']);
+            $query .= " AND t1.id_kategori = '$kat'"; 
+        }
         
         if (isset($filter['status']) && $filter['status'] !== '') {
-            $st = $filter['status'];
-            if ($st == '0') { $query .= " AND (t2.status = '0' OR t2.status IS NULL)"; }
-            else { $query .= " AND t2.status = '$st'"; }
+            $st = mysqli_real_escape_string($this->koneksi, $filter['status']);
+            if ($st == '0') { 
+                $query .= " AND (t2.status = '0' OR t2.status IS NULL)"; 
+            } else { 
+                $query .= " AND t2.status = '$st'"; 
+            }
         } else {
+            // Default: Tampilkan semua KECUALI yang sudah selesai
             $query .= " AND (t2.status != 'Selesai' OR t2.status IS NULL)";
         }
 
-        $query .= " ORDER BY t1.tgl_laporan DESC";
+        // --- BAGIAN PENTING (ORDER BY) ---
+        // Mengurutkan berdasarkan Tanggal Laporan TERBARU (DESC)
+        // Dan ID Pelaporan TERBESAR (DESC) untuk data di hari yang sama
+        $query .= " ORDER BY t1.tgl_laporan DESC, t1.id_pelaporan DESC";
+
         return mysqli_query($this->koneksi, $query);
     }
 
-    // 4. DATA RIWAYAT / CETAK (FILTER SELESAI) - [DIPAKAI UNTUK TABEL & CETAK]
+    // 4. DATA RIWAYAT / CETAK (FILTER SELESAI)
     public function get_riwayat_filter($filter = []) {
         $query = "SELECT 
                     r.id_riwayat, r.tgl_selesai, r.feedback,
@@ -63,12 +84,27 @@ class m_admin extends Database {
                   JOIN tb_kategori k ON r.id_kategori = k.id_kategori
                   WHERE 1=1";
 
-        if (!empty($filter['tgl_awal'])) { $query .= " AND r.tgl_selesai >= '".$filter['tgl_awal']."'"; }
-        if (!empty($filter['tgl_akhir'])) { $query .= " AND r.tgl_selesai <= '".$filter['tgl_akhir']."'"; }
-        if (!empty($filter['nama'])) { $query .= " AND s.nama LIKE '%".$filter['nama']."%'"; }
-        if (!empty($filter['kategori'])) { $query .= " AND r.id_kategori = '".$filter['kategori']."'"; }
+        // FILTER DATA \\
+        if (!empty($filter['tgl_awal'])) { 
+            $ta = mysqli_real_escape_string($this->koneksi, $filter['tgl_awal']);
+            $query .= " AND r.tgl_selesai >= '$ta'"; 
+        }
+        if (!empty($filter['tgl_akhir'])) { 
+            $tak = mysqli_real_escape_string($this->koneksi, $filter['tgl_akhir']);
+            $query .= " AND r.tgl_selesai <= '$tak'"; 
+        }
+        if (!empty($filter['nama'])) { 
+            $nm = mysqli_real_escape_string($this->koneksi, $filter['nama']);
+            $query .= " AND s.nama LIKE '%$nm%'"; 
+        }
+        if (!empty($filter['kategori'])) { 
+            $kt = mysqli_real_escape_string($this->koneksi, $filter['kategori']);
+            $query .= " AND r.id_kategori = '$kt'"; 
+        }
 
-        $query .= " ORDER BY r.tgl_selesai DESC";
+        // FILTER DATA RIWAYAT \\
+        $query .= " ORDER BY r.tgl_selesai DESC, r.id_riwayat DESC";
+        
         return mysqli_query($this->koneksi, $query);
     }
 
