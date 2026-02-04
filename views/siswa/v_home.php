@@ -3,18 +3,18 @@
 
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card border-0 shadow-lg position-relative overflow-hidden rounded-5" 
-                     style="background: linear-gradient(135deg, #0d9488 0%, #115e59 100%);">
-                    
-                    <div class="position-absolute rounded-circle" 
-                         style="width: 300px; height: 300px; top: -80px; left: -50px; background: rgba(0, 0, 0, 0.15);"></div>
-                    
-                    <div class="position-absolute rounded-circle" 
-                         style="width: 200px; height: 200px; bottom: -50px; right: 10%; background: rgba(0, 0, 0, 0.15);"></div>
+                <div class="card border-0 shadow-lg position-relative overflow-hidden rounded-5"
+                    style="background: linear-gradient(135deg, #0d9488 0%, #115e59 100%);">
+
+                    <div class="position-absolute rounded-circle"
+                        style="width: 300px; height: 300px; top: -80px; left: -50px; background: rgba(0, 0, 0, 0.15);"></div>
+
+                    <div class="position-absolute rounded-circle"
+                        style="width: 200px; height: 200px; bottom: -50px; right: 10%; background: rgba(0, 0, 0, 0.15);"></div>
 
                     <div class="card-body p-4 p-md-5 position-relative z-1 text-white">
                         <div class="row align-items-center">
-                            
+
                             <div class="col-md-8 mb-4 mb-md-0">
                                 <span class="badge bg-white text-teal mb-3 px-3 py-2 fw-bold rounded-pill text-uppercase ls-1 shadow-sm">
                                     <i class="ti ti-user-circle me-1"></i> Dashboard Siswa
@@ -44,53 +44,10 @@
             </div>
         </div>
 
-        <h5 class="fw-bold text-dark mb-3 ps-2 border-start border-4 border-teal"><i class="ti ti-chart-bar me-2"></i>Statistik Laporanmu</h5>
-        <div class="row g-3 mb-5">
-            
-            <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm h-100 hover-scale bg-primary text-white text-center rounded-4">
-                    <div class="card-body p-3">
-                        <i class="ti ti-files fs-1 mb-2 opacity-50"></i>
-                        <h6 class="text-uppercase small fw-bold mb-1 opacity-75">Total Laporan</h6>
-                        <h2 class="fw-bold mb-0"><?= isset($stats['total']) ? $stats['total'] : 0; ?></h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm h-100 hover-scale bg-warning text-dark text-center rounded-4">
-                    <div class="card-body p-3">
-                        <i class="ti ti-clock fs-1 mb-2 opacity-50"></i>
-                        <h6 class="text-uppercase small fw-bold mb-1 opacity-75">Menunggu</h6>
-                        <h2 class="fw-bold mb-0"><?= isset($stats['menunggu']) ? $stats['menunggu'] : 0; ?></h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm h-100 hover-scale bg-info text-white text-center rounded-4">
-                    <div class="card-body p-3">
-                        <i class="ti ti-settings fs-1 mb-2 opacity-50"></i>
-                        <h6 class="text-uppercase small fw-bold mb-1 opacity-75">Di Proses</h6>
-                        <h2 class="fw-bold mb-0"><?= isset($stats['proses']) ? $stats['proses'] : 0; ?></h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm h-100 hover-scale bg-success text-white text-center rounded-4">
-                    <div class="card-body p-3">
-                        <i class="ti ti-circle-check fs-1 mb-2 opacity-50"></i>
-                        <h6 class="text-uppercase small fw-bold mb-1 opacity-75">Selesai</h6>
-                        <h2 class="fw-bold mb-0"><?= isset($stats['selesai']) ? $stats['selesai'] : 0; ?></h2>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <h5 class="fw-bold text-dark mb-3 ps-2 border-start border-4 border-dark"><i class="ti ti-info-circle me-2"></i>Alur Pengaduan</h5>
         <div class="row g-4">
-            
+
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm h-100 text-center hover-up position-relative overflow-hidden rounded-4">
                     <div class="card-body p-4">
@@ -103,7 +60,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm h-100 text-center hover-up position-relative overflow-hidden rounded-4">
                     <div class="card-body p-4">
@@ -150,28 +107,60 @@
 
 <style>
     /* Custom Colors */
-    .text-teal { color: #0d9488; }
-    .border-teal { border-color: #0d9488 !important; }
-    
+    .text-teal {
+        color: #0d9488;
+    }
+
+    .border-teal {
+        border-color: #0d9488 !important;
+    }
+
     /* Hover Effects */
-    .hover-up { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .hover-up:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
-    
-    .hover-scale { transition: transform 0.2s ease; }
-    .hover-scale:hover { transform: scale(1.05); }
+    .hover-up {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-up:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .hover-scale {
+        transition: transform 0.2s ease;
+    }
+
+    .hover-scale:hover {
+        transform: scale(1.05);
+    }
 
     /* Icons Background */
     .step-icon {
-        width: 70px; height: 70px;
+        width: 70px;
+        height: 70px;
         border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        z-index: 2; position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+        position: relative;
     }
-    .bg-light-primary { background-color: #e0e7ff; }
-    .bg-light-warning { background-color: #fef3c7; }
-    .bg-light-info { background-color: #cffafe; }
-    .bg-light-success { background-color: #dcfce7; }
-    
+
+    .bg-light-primary {
+        background-color: #e0e7ff;
+    }
+
+    .bg-light-warning {
+        background-color: #fef3c7;
+    }
+
+    .bg-light-info {
+        background-color: #cffafe;
+    }
+
+    .bg-light-success {
+        background-color: #dcfce7;
+    }
+
     /* Step Number Decoration */
     .step-number {
         position: absolute;
@@ -179,12 +168,20 @@
         right: -10px;
         font-size: 4rem;
         font-weight: 900;
-        color: rgba(0,0,0,0.03);
+        color: rgba(0, 0, 0, 0.03);
         font-family: sans-serif;
         z-index: 1;
     }
 
-    .ls-1 { letter-spacing: 1px; }
-    .rounded-5 { border-radius: 1.5rem !important; }
-    .rounded-4 { border-radius: 1rem !important; }
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+
+    .rounded-5 {
+        border-radius: 1.5rem !important;
+    }
+
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
 </style>

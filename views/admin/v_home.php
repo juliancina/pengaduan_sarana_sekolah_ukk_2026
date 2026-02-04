@@ -1,6 +1,23 @@
 <div class="pc-container">
     <div class="pc-content">
 
+        <?php if (isset($stats['laporan_masuk']) && $stats['laporan_masuk'] > 0): ?>
+        <div class="notification-float">
+            <div class="alert alert-warning border-0 shadow-lg d-flex align-items-center p-3 rounded-4 mb-0" role="alert">
+                <div class="bg-white text-warning p-2 rounded-circle me-3 shadow-sm">
+                    <i class="ti ti-bell-ringing fs-3"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark">Laporan Masuk!</h6>
+                    <small class="text-dark opacity-75">
+                        Ada <strong><?= $stats['laporan_masuk']; ?></strong> laporan baru menunggu.
+                    </small>
+                    <a href="index.php?page=verifikasi" class="stretched-link"></a>
+                </div>
+                <button type="button" class="btn-close ms-3 z-2" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        <?php endif; ?>
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card border-0 shadow-lg position-relative overflow-hidden rounded-5" 
@@ -50,17 +67,7 @@
         <h5 class="fw-bold text-dark mb-3 ps-2 border-start border-4 border-teal"><i class="ti ti-chart-pie me-2"></i>Statistik Pengaduan</h5>
         <div class="row g-3 mb-5">
             
-            <div class="col-md-3 col-6">
-                <div class="card border-0 shadow-sm h-100 hover-scale bg-danger text-white text-center rounded-4">
-                    <div class="card-body p-3">
-                        <i class="ti ti-bell-ringing fs-1 mb-2 opacity-50"></i>
-                        <h6 class="text-uppercase small fw-bold mb-1 opacity-75">Laporan Baru</h6>
-                        <h2 class="fw-bold mb-0"><?= isset($stats['laporan_masuk']) ? $stats['laporan_masuk'] : 0; ?></h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-6">
+            <div class="col-md-4 col-6">
                 <div class="card border-0 shadow-sm h-100 hover-scale bg-warning text-dark text-center rounded-4">
                     <div class="card-body p-3">
                         <i class="ti ti-clock fs-1 mb-2 opacity-50"></i>
@@ -70,7 +77,7 @@
                 </div>
             </div>
 
-            <div class="col-md-3 col-6">
+            <div class="col-md-4 col-6">
                 <div class="card border-0 shadow-sm h-100 hover-scale bg-info text-white text-center rounded-4">
                     <div class="card-body p-3">
                         <i class="ti ti-settings fs-1 mb-2 opacity-50"></i>
@@ -80,7 +87,7 @@
                 </div>
             </div>
 
-            <div class="col-md-3 col-6">
+            <div class="col-md-4 col-6">
                 <div class="card border-0 shadow-sm h-100 hover-scale bg-success text-white text-center rounded-4">
                     <div class="card-body p-3">
                         <i class="ti ti-circle-check fs-1 mb-2 opacity-50"></i>
@@ -135,18 +142,39 @@
 </div>
 
 <style>
-    /* Custom Colors */
+    /* 1. CSS ANIMASI NOTIFIKASI */
+    .notification-float {
+        position: fixed;
+        top: 90px; /* Jarak dari atas (di bawah navbar) */
+        right: 20px;
+        z-index: 9999; /* Pastikan selalu di atas elemen lain */
+        min-width: 320px;
+        animation: slideInRight 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    }
+
+    @keyframes slideInRight {
+        0% {
+            transform: translateX(120%);
+            opacity: 0;
+        }
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* 2. CUSTOM COLORS */
     .text-teal { color: #0d9488; }
     .border-teal { border-color: #0d9488 !important; }
     
-    /* Hover Effects */
+    /* 3. HOVER EFFECTS */
     .hover-up { transition: transform 0.3s ease, box-shadow 0.3s ease; }
     .hover-up:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
     
     .hover-scale { transition: transform 0.2s ease; }
     .hover-scale:hover { transform: scale(1.05); }
 
-    /* Icons Background (Lingkaran Icon) */
+    /* 4. ICONS */
     .step-icon {
         width: 70px; height: 70px; min-width: 70px;
         border-radius: 50%;
@@ -156,7 +184,6 @@
     .bg-light-primary { background-color: #e0e7ff; }
     .bg-light-danger { background-color: #fee2e2; }
     
-    /* Text Spacing */
     .ls-1 { letter-spacing: 1px; }
     .rounded-5 { border-radius: 1.5rem !important; }
     .rounded-4 { border-radius: 1rem !important; }
