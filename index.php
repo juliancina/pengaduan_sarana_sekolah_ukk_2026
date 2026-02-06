@@ -5,7 +5,7 @@ require_once 'config/cn_database.php';
 $page = isset($_GET['page']) ? $_GET['page'] : 'login';
 
 switch ($page) {
-    // === AUTH ===
+    // === AUTH === \\
     case 'login':
         require_once 'controllers/c_auth.php';
         $app = new c_auth();
@@ -36,7 +36,7 @@ switch ($page) {
         $app->logout();
         break;
 
-    // === SISWA ===
+    // === SISWA === \\
     case 'siswa_dashboard':
     case 'home':
     case 'akun':
@@ -48,13 +48,14 @@ switch ($page) {
         $app->index(); 
         break;
 
-    // === ADMIN ===
+    // === ADMIN === \\
     case 'admin_dashboard':
     case 'verifikasi':
     case 'admin_riwayat':
     case 'admin_akun':
     case 'proses_tanggapan':
     case 'cetak_laporan': 
+    case 'delete_laporan':
         require_once 'controllers/c_admin.php';
         $app = new c_admin();
         $app->index();
