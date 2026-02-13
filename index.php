@@ -47,6 +47,19 @@ switch ($page) {
         $app = new c_siswa();
         $app->index(); 
         break;
+       
+    case 'edit':
+        require_once 'controllers/c_siswa.php';
+        $app = new c_siswa();
+        $app->edit();
+        break;
+
+    case 'hapus':
+        require_once 'controllers/c_siswa.php';
+        $app = new c_siswa();
+        $app->hapus();
+        break;
+
 
     // === ADMIN === \\
     case 'admin_dashboard':

@@ -1,108 +1,145 @@
 <?php
-require_once 'models/m_pengaduan.php';
+include_once 'models/m_siswa.php';
 
-class c_siswa {
-    private $model;
+class C_Siswa
+{
+    public $model;
 
-    public function __construct() {
-        $this->model = new m_pengaduan();
+    public function __construct()
+    {
+        $this->model = new m_siswa();
     }
 
-    public function index() {
-        if (session_status() == PHP_SESSION_NONE) { session_start(); }
-        
-        // Cek Login
+    public function index()
+    {
+        // 1. Cek Login
         if (!isset($_SESSION['nis'])) {
             header("Location: index.php?page=login");
             exit;
         }
 
-        $page = isset($_GET['page']) ? $_GET['page'] : 'siswa_dashboard';
+        $nis = $_SESSION['nis'];
+        $page = isset($_GET['page']) ? $_GET['page'] : 'home';
 
-        // Load Header & Sidebar
-        include 'views/template/header.php';
-        include 'views/template/sidebar.php';
-
+        // 2. LOGIC PER HALAMAN (Persiapan Data)
         switch ($page) {
-            case 'siswa_dashboard':
-            case 'home':
-                $nis = $_SESSION['nis'];
-                
-                // 1. Ambil Data Siswa (Nama, dll)
-                $data_siswa = mysqli_fetch_assoc($this->model->get_siswa($nis));
-                
-                // 2. Ambil Statistik Laporan (PENTING: Memanggil fungsi baru)
-                $stats = $this->model->get_stats_siswa($nis);
-                
-                include 'views/siswa/v_home.php';
-                break;
-
-            case 'akun':
-                $nis = $_SESSION['nis'];
-                $data = mysqli_fetch_assoc($this->model->get_siswa($nis));
-                include 'views/siswa/v_akun.php';
-                break;
-
             case 'form':
-                $kategori = $this->model->get_kategori();
-                $laporan_aktif = $this->model->get_laporan($_SESSION['nis'], "NOT_SELESAI");
-                include 'views/siswa/v_form.php';
-                break;
-            
-            case 'riwayat':
-                 $laporan_selesai = $this->model->get_laporan($_SESSION['nis'], "SELESAI");
-                 include 'views/siswa/v_riwayat.php';
-                 break;
-
             case 'simpan':
-                $this->simpan_laporan();
+                // Logic Kirim Laporan
+                if (isset($_POST['kirim'])) {
+                    $nama_foto = 'default.png';
+                    if (!empty($_FILES['foto']['name'])) {
+                        $nama_foto = date('YmdHis') . '_' . rand(100, 999) . '.jpg';
+                        move_uploaded_file($_FILES['foto']['tmp_name'], "assets/img_laporan/" . $nama_foto);
+                    }
+                    $kirim = $this->model->kirim_laporan($nis, $_POST['id_kategori'], $_POST['lokasi'], $_POST['ket'], $nama_foto);
+                    
+                    if ($kirim) {
+                        echo "<script>alert('Laporan Terkirim!'); window.location='index.php?page=form';</script>";
+                    } else {
+                        echo "<script>alert('Gagal!'); window.location='index.php?page=form';</script>";
+                    }
+                    exit;
+                }
+                // Data untuk Form
+                $kategori = $this->model->get_kategori();
+                $riwayat  = $this->model->get_riwayat_siswa($nis); 
                 break;
 
-            case 'logout':
-                session_destroy();
-                header("Location: index.php?page=login");
-                exit;
+            case 'riwayat':
+                $riwayat = $this->model->get_riwayat_selesai_final($nis);
+                break;
                 
-            default:
-                include 'views/siswa/v_home.php';
+            case 'akun':
+                $q_profil = $this->model->get_profil_siswa($nis); 
+                if ($q_profil && mysqli_num_rows($q_profil) > 0) {
+                    $data = mysqli_fetch_assoc($q_profil);
+                } else {
+                    $data = [];
+                }
+                break;
+
+            default: 
+                // === PERBAIKAN DI SINI ===
+                // Kita ambil data profil JUGA di halaman Home (default)
+                // Agar variabel $data['nama'] tersedia di v_home.php
+                $q_profil = $this->model->get_profil_siswa($nis);
+                if ($q_profil && mysqli_num_rows($q_profil) > 0) {
+                    $data = mysqli_fetch_assoc($q_profil);
+                } else {
+                    $data = [];
+                }
                 break;
         }
-        
-        include 'views/template/footer.php';
+
+        // 3. LOAD TEMPLATE (Header & Sidebar)
+        require_once 'views/template/header.php';
+        require_once 'views/template/sidebar.php';
+
+        // 4. LOAD VIEW (Isi Halaman)
+        switch ($page) {
+            case 'form':
+            case 'simpan':
+                require_once 'views/siswa/v_form.php';
+                break;
+            case 'riwayat':
+                require_once 'views/siswa/v_riwayat.php';
+                break;
+            case 'akun':
+                require_once 'views/siswa/v_akun.php';
+                break;
+            default:
+                require_once 'views/siswa/v_home.php';
+                break;
+        }
+
+        require_once 'views/template/footer.php';
     }
 
-    // --- FUNGSI SIMPAN ---
-    private function simpan_laporan() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $nis = $_SESSION['nis'];
-            $id_kat = $_POST['id_kategori'];
-            $lokasi = $_POST['lokasi'];
-            $ket = $_POST['ket'];
-            $foto = 'default.png';
-            
-            // Upload Foto Handler
-            if(isset($_FILES['foto']) && $_FILES['foto']['error'] == 0){
-                $target_dir = "assets/img_laporan/";
-                if (!is_dir($target_dir)) { mkdir($target_dir, 0777, true); }
+    // === EDIT ===
+    public function edit()
+    {
+        if (!isset($_SESSION['nis'])) { header("Location: index.php?page=login"); exit; }
+        $nis = $_SESSION['nis'];
 
-                $file_name = $_FILES['foto']['name'];
-                $file_tmp  = $_FILES['foto']['tmp_name'];
-                $ext       = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-                $allowed = ['jpg', 'jpeg', 'png', 'gif'];
-
-                if(in_array($ext, $allowed)){
-                    $new_name = date('YmdHis') . '_' . rand(100,999) . '.' . $ext;
-                    if(move_uploaded_file($file_tmp, $target_dir . $new_name)){
-                        $foto = $new_name;
-                    }
-                }
+        if (isset($_POST['update_laporan'])) {
+            $foto_baru = null;
+            if (!empty($_FILES['foto']['name'])) {
+                $foto_baru = date('YmdHis').rand(100,999).'.jpg';
+                move_uploaded_file($_FILES['foto']['tmp_name'], "assets/img_laporan/".$foto_baru);
             }
-
-            if($this->model->simpan_aspirasi($nis, $id_kat, $lokasi, $ket, $foto)){
-                echo "<script>alert('Laporan Berhasil Dikirim!'); window.location='index.php?page=form';</script>";
+            if($this->model->update_laporan($_POST['id_pelaporan'], $nis, $_POST['lokasi'], $_POST['ket'], $foto_baru)){
+                echo "<script>alert('Laporan Berhasil Diedit!'); window.location='index.php?page=form';</script>";
             } else {
-                echo "<script>alert('Gagal Mengirim Laporan. Coba lagi.'); window.location='index.php?page=form';</script>";
+                echo "<script>alert('Gagal! Laporan terkunci.'); window.location='index.php?page=form';</script>";
             }
+        } else {
+            $id = $_GET['id'];
+            $data = $this->model->get_detail_laporan($id, $nis);
+            
+            if($data && mysqli_num_rows($data) > 0){
+                $edit = mysqli_fetch_object($data);
+                
+                require_once 'views/template/header.php';
+                require_once 'views/template/sidebar.php';
+                require_once 'views/siswa/v_edit_aspirasi.php';
+                require_once 'views/template/footer.php';
+            } else {
+                echo "<script>alert('Data tidak ditemukan'); window.location='index.php?page=form';</script>";
+            }
+        }
+    }
+
+    // === HAPUS ===
+    public function hapus()
+    {
+        if (!isset($_SESSION['nis'])) { header("Location: index.php?page=login"); exit; }
+        $nis = $_SESSION['nis'];
+        
+        if($this->model->hapus_laporan_siswa($_GET['id'], $nis)){
+            echo "<script>alert('Laporan Dihapus!'); window.location='index.php?page=form';</script>";
+        } else {
+            echo "<script>alert('Gagal! Laporan terkunci.'); window.location='index.php?page=form';</script>";
         }
     }
 }

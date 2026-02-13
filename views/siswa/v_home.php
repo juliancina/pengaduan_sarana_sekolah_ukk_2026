@@ -19,7 +19,7 @@
                                 <span class="badge bg-white text-teal mb-3 px-3 py-2 fw-bold rounded-pill text-uppercase ls-1 shadow-sm">
                                     <i class="ti ti-user-circle me-1"></i> Dashboard Siswa
                                 </span>
-                                <h1 class="fw-bold mb-2 display-6" style="color: #fef3c7;">Halo, <?= isset($data_siswa['nama']) ? htmlspecialchars($data_siswa['nama']) : 'Siswa'; ?>! 👋</h1>
+                                <h1 class="fw-bold mb-2 display-6" style="color: #fef3c7;">Halo, <?= isset($data['nama']) ? htmlspecialchars($data['nama']) : 'Siswa'; ?>! 👋</h1>
                                 <p class="lead opacity-90 mb-4 fw-light">
                                     Selamat datang kembali. Mari jaga fasilitas sekolah kita bersama-sama. <br>
                                     <span class="fs-6 opacity-75">Laporkan kerusakan sekarang juga.</span>

@@ -50,11 +50,7 @@ class m_pengaduan extends Database {
         $nis = mysqli_real_escape_string($this->koneksi, $nis);
         
         if ($jenis_status == "SELESAI") {
-            // --- LOGIKA PERBAIKAN: AMBIL DARI TB_RIWAYAT ---
-            // Kita ambil data penyelesaian dari tb_riwayat (r)
-            // Kita ambil data foto/lokasi dari tb_input_aspirasi (i)
-            // Kita ambil nama kategori dari tb_kategori (k)
-            
+
             $query = "SELECT 
                         r.id_riwayat,
                         r.tgl_selesai, 
