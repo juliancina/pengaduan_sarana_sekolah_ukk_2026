@@ -21,7 +21,7 @@
 
     <div class="header">
         <h2>LAPORAN PENGADUAN SARANA SEKOLAH</h2>
-        <p>SMK NEGERI CONTOH</p>
+        <p>SMK SANGKURIANG 1 CIMAHI</p>
     </div>
 
     <div style="margin-bottom: 15px;">
@@ -39,7 +39,6 @@
                 <th>Kelas</th>
                 <th>Kategori</th>
                 <th>Isi Laporan</th>
-                <th>Tanggapan Admin</th>
             </tr>
         </thead>
         <tbody>
@@ -66,7 +65,7 @@
     </table>
 
     <div class="footer">
-        <p>Dicetak pada: <?= date('d-m-Y H:i'); ?></p>
+        <p>Dicetak pada: <?= date('d/m/Y'); ?></p>
         <br><br><br>
         <p>( Bagian Sarana & Prasarana )</p>
     </div>

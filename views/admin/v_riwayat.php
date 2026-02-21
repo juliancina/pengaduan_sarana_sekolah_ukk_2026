@@ -1,147 +1,168 @@
 <div class="pc-container">
     <div class="pc-content">
-        
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-light">
-                <h6 class="mb-0 fw-bold text-dark"><i class="ti ti-filter me-2"></i>Filter Arsip Riwayat</h6>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-bold text-dark mb-1">Arsip Riwayat Laporan</h4>
+                <p class="text-muted small mb-0">Daftar semua laporan yang telah selesai diproses.</p>
             </div>
-            <div class="card-body">
+        </div>
+
+        <div class="card shadow-sm border-0 mb-4 rounded-4">
+            <div class="card-header bg-white border-bottom py-3">
+                <h6 class="mb-0 fw-bold text-dark"><i class="ti ti-filter me-2 text-primary"></i>Filter Data Riwayat</h6>
+            </div>
+            <div class="card-body p-4">
                 <form action="index.php" method="GET" id="formFilter">
                     <input type="hidden" name="page" value="admin_riwayat">
 
-                    <div class="row g-3">
+                    <div class="row g-3 mb-4">
                         <div class="col-md-3">
-                            <label class="form-label small fw-bold">Tanggal Selesai (Dari)</label>
-                            <input type="date" name="tgl_awal" class="form-control form-control-sm" 
-                                   value="<?= isset($_GET['tgl_awal']) ? $_GET['tgl_awal'] : '' ?>">
+                            <label class="form-label small fw-bold text-muted">Dari Tanggal (Selesai)</label>
+                            <input type="date" name="tgl_awal" class="form-control"
+                                value="<?= isset($_GET['tgl_awal']) ? $_GET['tgl_awal'] : '' ?>">
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label small fw-bold">Tanggal Selesai (Sampai)</label>
-                            <input type="date" name="tgl_akhir" class="form-control form-control-sm" 
-                                   value="<?= isset($_GET['tgl_akhir']) ? $_GET['tgl_akhir'] : '' ?>">
+                            <label class="form-label small fw-bold text-muted">Sampai Tanggal (Selesai)</label>
+                            <input type="date" name="tgl_akhir" class="form-control"
+                                value="<?= isset($_GET['tgl_akhir']) ? $_GET['tgl_akhir'] : '' ?>">
                         </div>
-
                         <div class="col-md-3">
-                            <label class="form-label small fw-bold">Nama Siswa</label>
-                            <input type="text" name="nama" class="form-control form-control-sm" placeholder="Cari nama..." 
-                                   value="<?= isset($_GET['nama']) ? $_GET['nama'] : '' ?>">
+                            <label class="form-label small fw-bold text-muted">Nama Siswa</label>
+                            <input type="text" name="nama" class="form-control" placeholder="Cari nama pelapor..."
+                                value="<?= isset($_GET['nama']) ? $_GET['nama'] : '' ?>">
                         </div>
-
                         <div class="col-md-3">
-                            <label class="form-label small fw-bold">Kategori</label>
-                            <select name="kategori" class="form-select form-select-sm">
+                            <label class="form-label small fw-bold text-muted">Kategori Laporan</label>
+                            <select name="kategori" class="form-select">
                                 <option value="">-- Semua Kategori --</option>
-                                <?php 
-                                if(isset($data_kategori) && mysqli_num_rows($data_kategori) > 0) {
-                                    mysqli_data_seek($data_kategori, 0); 
-                                    while($k = mysqli_fetch_assoc($data_kategori)): 
-                                        $selected = (isset($_GET['kategori']) && $_GET['kategori'] == $k['id_kategori']) ? 'selected' : '';
+                                <?php
+                                $kats = $this->model->get_kategori();
+                                while ($k = mysqli_fetch_assoc($kats)) {
+                                    $sel = (isset($_GET['kategori']) && $_GET['kategori'] == $k['id_kategori']) ? 'selected' : '';
+                                    echo "<option value='{$k['id_kategori']}' $sel>{$k['ket_kategori']}</option>";
+                                }
                                 ?>
-                                    <option value="<?= $k['id_kategori']; ?>" <?= $selected; ?>>
-                                        <?= $k['ket_kategori']; ?>
-                                    </option>
-                                <?php endwhile; } ?>
                             </select>
                         </div>
                     </div>
 
-                    <div class="row mt-3">
-                        <div class="col-12 text-end">
-                            <a href="index.php?page=admin_riwayat" class="btn btn-sm btn-secondary me-1"><i class="ti ti-refresh"></i> Reset</a>
-                            
-                            <button type="submit" class="btn btn-sm btn-primary me-1"><i class="ti ti-search"></i> Terapkan Filter</button>
-                            
-                            <?php
-                                // Membuat URL Cetak Dinamis berdasarkan filter saat ini
-                                $url_cetak = "index.php?page=cetak_laporan";
-                                if(isset($_GET['tgl_awal'])) $url_cetak .= "&tgl_awal=".$_GET['tgl_awal'];
-                                if(isset($_GET['tgl_akhir'])) $url_cetak .= "&tgl_akhir=".$_GET['tgl_akhir'];
-                                if(isset($_GET['nama']))      $url_cetak .= "&nama=".$_GET['nama'];
-                                if(isset($_GET['kategori']))  $url_cetak .= "&kategori=".$_GET['kategori'];
-                            ?>
-                            <a href="<?= $url_cetak; ?>" target="_blank" class="btn btn-sm btn-warning"><i class="ti ti-printer"></i> Cetak PDF</a>
-                        </div>
+                    <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                        <a href="index.php?page=admin_riwayat" class="btn btn-light border shadow-sm px-3" title="Bersihkan Filter">
+                            <i class="ti ti-refresh text-secondary me-1"></i> Reset
+                        </a>
+                        <button type="submit" class="btn btn-primary shadow-sm px-4" title="Terapkan Filter">
+                            <i class="ti ti-search me-1"></i> Cari Data
+                        </button>
+                        <button type="button" class="btn btn-danger shadow-sm px-4" onclick="cetakPDF()" title="Cetak ke PDF">
+                            <i class="ti ti-printer me-1"></i> Cetak PDF
+                        </button>
                     </div>
                 </form>
+
+                <script>
+                    function cetakPDF() {
+                        var form = document.getElementById('formFilter');
+                        var formData = new FormData(form);
+                        formData.set('page', 'cetak_laporan'); // Mencegah tabrakan URL
+                        var url = 'index.php?' + new URLSearchParams(formData).toString();
+                        window.open(url, '_blank');
+                    }
+                </script>
             </div>
         </div>
 
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-success text-white py-3 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 fw-bold"><i class="ti ti-archive me-2"></i>Data Laporan Selesai</h5>
-                <span class="badge bg-white text-success">
-                    <?= (isset($data_riwayat)) ? mysqli_num_rows($data_riwayat) : 0; ?> Data
-                </span>
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light border-bottom">
+                            <tr>
+                                <th class="px-4 py-3 text-secondary small fw-bold text-uppercase" width="15%">Waktu</th>
+                                <th class="px-4 py-3 text-secondary small fw-bold text-uppercase" width="20%">Pelapor</th>
+                                <th class="px-4 py-3 text-secondary small fw-bold text-uppercase" width="45%">Masalah & Tanggapan</th>
+                                <th class="px-4 py-3 text-center text-secondary small fw-bold text-uppercase" width="10%">Bukti</th>
+                                <th class="px-4 py-3 text-center text-secondary small fw-bold text-uppercase" width="10%">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if ($data_riwayat && mysqli_num_rows($data_riwayat) > 0): ?>
+                                <?php while ($r = mysqli_fetch_assoc($data_riwayat)): ?>
+                                    <tr>
+                                        <td class="px-4 py-3 align-top">
+                                            <div class="fw-bold text-dark mb-1">
+                                                <i class="ti ti-calendar-check text-success me-1"></i> 
+                                                <?= date('d M Y', strtotime($r['tgl_selesai'])) ?>
+                                            </div>
+                                            <div class="small text-muted" style="font-size: 0.8rem;">
+                                                Dikirim: <?= date('d M Y', strtotime($r['tgl_laporan'])) ?>
+                                            </div>
+                                        </td>
+
+                                        <td class="px-4 py-3 align-top">
+                                            <div class="d-flex align-items-start">
+                                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-2 mt-1" style="width: 32px; height: 32px; flex-shrink: 0;">
+                                                    <i class="ti ti-user fs-5"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-dark mb-1"><?= htmlspecialchars($r['nama']) ?></div>
+                                                    <div class="small text-muted mb-0">NIS: <?= htmlspecialchars($r['nis']) ?></div>
+                                                    <div class="small text-muted">Kelas: <?= htmlspecialchars($r['kelas']) ?></div>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td class="px-4 py-3 align-top">
+                                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 mb-2 px-2 py-1">
+                                                <i class="ti ti-category me-1"></i> <?= htmlspecialchars($r['ket_kategori']) ?>
+                                            </span>
+                                            
+                                            <div class="text-dark mb-3 text-wrap" style="font-size: 0.9rem;">
+                                                <strong>Keluhan:</strong> <?= htmlspecialchars($r['ket']) ?>
+                                            </div>
+                                            
+                                            <div class="bg-light p-3 rounded-3 border-start border-4 border-success">
+                                                <div class="small fw-bold text-success mb-1">
+                                                    <i class="ti ti-messages me-1"></i> Tanggapan Petugas:
+                                                </div>
+                                                <div class="text-muted small" style="white-space: pre-wrap;"><?= isset($r['feedback']) && $r['feedback'] != '' ? htmlspecialchars($r['feedback']) : 'Laporan telah diselesaikan dan ditutup.' ?></div>
+                                            </div>
+                                        </td>
+
+                                        <td class="px-4 py-3 text-center align-top pt-4">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle p-2" 
+                                                    data-bs-toggle="modal" data-bs-target="#modalFoto"
+                                                    data-foto="../assets/img_laporan/<?= htmlspecialchars($r['foto']) ?>"
+                                                    data-judul="Foto Bukti - <?= htmlspecialchars($r['nama']) ?>" 
+                                                    title="Lihat Foto Bukti">
+                                                <i class="ti ti-photo fs-5"></i>
+                                            </button>
+                                        </td>
+
+                                        <td class="px-4 py-3 text-center align-top pt-4">
+                                            <span class="badge bg-success px-3 py-2 rounded-pill shadow-sm">
+                                                <i class="ti ti-check me-1"></i> Selesai
+                                            </span>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="5" class="text-center py-5">
+                                        <div class="py-4 opacity-50">
+                                            <i class="ti ti-archive-off text-muted mb-3 d-block" style="font-size: 3rem;"></i>
+                                            <span class="fw-bold text-muted fs-5">Tidak ada data riwayat laporan.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="card-body p-0 table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="ps-4">Tgl. Selesai</th>
-                            <th>Pelapor</th>
-                            <th>Masalah & Feedback</th>
-                            <th>Bukti</th>
-                            <th class="text-end pe-4">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php 
-                        if(isset($data_riwayat) && mysqli_num_rows($data_riwayat) > 0): 
-                            while($row = mysqli_fetch_assoc($data_riwayat)): 
-                        ?>
-                            <tr>
-                                <td class="ps-4">
-                                    <span class="fw-bold text-success">
-                                        <?= date('d/m/Y', strtotime($row['tgl_selesai'])); ?>
-                                    </span>
-                                    <br>
-                                    <small class="text-muted" style="font-size: 11px;">
-                                        Lapor: <?= date('d/m/Y', strtotime($row['tgl_laporan'])); ?>
-                                    </small>
-                                </td>
-                                
-                                <td>
-                                    <div class="fw-bold text-dark"><?= $row['nama']; ?></div>
-                                    <small class="text-muted">Kelas: <?= $row['kelas']; ?></small>
-                                </td>
-
-                                <td style="max-width: 320px;">
-                                    <span class="badge bg-light text-dark border mb-1"><?= $row['ket_kategori']; ?></span>
-                                    <div class="mb-2 text-truncate text-muted small">
-                                        "<?= substr($row['ket'], 0, 70); ?>..."
-                                    </div>
-                                    <div class="alert alert-success py-1 px-2 mb-0 d-inline-block small" style="font-size: 12px;">
-                                        <i class="ti ti-check-double me-1"></i> 
-                                        <b>Tanggapan:</b> <?= $row['feedback']; ?>
-                                    </div>
-                                </td>
-
-                                <td>
-                                    <button class="btn btn-sm btn-outline-secondary" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#modalFoto"
-                                            data-foto="assets/img_laporan/<?= $row['foto']; ?>"
-                                            data-judul="Bukti - <?= $row['nama']; ?>">
-                                        <i class="ti ti-photo"></i>
-                                    </button>
-                                </td>
-
-                                <td class="text-end pe-4">
-                                    <span class="badge bg-success rounded-pill px-3">
-                                        <i class="ti ti-check-circle me-1"></i> Selesai
-                                    </span>
-                                </td>
-                            </tr>
-                        <?php endwhile; else: ?>
-                            <tr>
-                                <td colspan="5" class="text-center py-5 text-muted">
-                                    <i class="ti ti-archive-off fs-1 mb-3 d-block opacity-25"></i>
-                                    <span class="fw-bold">Tidak ada riwayat laporan yang ditemukan.</span>
-                                </td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+            <div class="card-footer bg-white border-top py-3 text-muted small d-flex justify-content-between align-items-center">
+                <span>Menampilkan data riwayat yang difilter.</span>
+                <span class="badge bg-dark px-2 py-1"><?= isset($data_riwayat) ? mysqli_num_rows($data_riwayat) : 0 ?> Data Ditemukan</span>
             </div>
         </div>
 
@@ -149,26 +170,26 @@
 </div>
 
 <div class="modal fade" id="modalFoto" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="judulFoto">Bukti Laporan</h5>
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-light border-0">
+                <h5 class="modal-title fw-bold text-dark" id="judulFoto"><i class="ti ti-photo me-2 text-primary"></i>Bukti Laporan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center bg-light p-2">
-                <img src="" id="tampilFoto" class="img-fluid rounded shadow-sm">
+            <div class="modal-body text-center p-4 bg-white">
+                <img src="" id="tampilFoto" class="img-fluid rounded shadow-sm border" style="max-height: 70vh; object-fit: contain;" alt="Bukti Foto">
             </div>
         </div>
     </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    var modalFoto = document.getElementById('modalFoto');
-    modalFoto.addEventListener('show.bs.modal', function (event) {
-        var btn = event.relatedTarget;
-        modalFoto.querySelector('#judulFoto').textContent = btn.getAttribute('data-judul');
-        modalFoto.querySelector('#tampilFoto').src = btn.getAttribute('data-foto');
+    document.addEventListener('DOMContentLoaded', function() {
+        var modalFoto = document.getElementById('modalFoto');
+        modalFoto.addEventListener('show.bs.modal', function(event) {
+            var btn = event.relatedTarget;
+            modalFoto.querySelector('#judulFoto').innerHTML = '<i class="ti ti-photo me-2 text-primary"></i>' + btn.getAttribute('data-judul');
+            modalFoto.querySelector('#tampilFoto').src = btn.getAttribute('data-foto');
+        });
     });
-});
 </script>

@@ -55,7 +55,7 @@ class c_admin {
                     $fb  = $_POST['feedback'];
                     $adm = $_SESSION['id_admin']; 
 
-                    if ($this->model->update_tanggapan($id, $st, $fb, $adm)) {
+                    if ($this->model->proses_tanggapan($id, $st, $fb, $adm)) {
                         echo "<script>alert('Berhasil Update Status!'); window.location='index.php?page=verifikasi';</script>";
                     } else {
                         echo "<script>alert('Gagal Update Database!'); window.location='index.php?page=verifikasi';</script>";
