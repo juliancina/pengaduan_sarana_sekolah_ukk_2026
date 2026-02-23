@@ -80,8 +80,7 @@
                             <tr>
                                 <th class="px-4 py-3 text-secondary small fw-bold text-uppercase" width="15%">Waktu</th>
                                 <th class="px-4 py-3 text-secondary small fw-bold text-uppercase" width="20%">Pelapor</th>
-                                <th class="px-4 py-3 text-secondary small fw-bold text-uppercase" width="45%">Masalah & Tanggapan</th>
-                                <th class="px-4 py-3 text-center text-secondary small fw-bold text-uppercase" width="10%">Bukti</th>
+                                <th class="px-4 py-3 text-secondary small fw-bold text-uppercase" width="55%">Masalah & Tanggapan</th>
                                 <th class="px-4 py-3 text-center text-secondary small fw-bold text-uppercase" width="10%">Status</th>
                             </tr>
                         </thead>
@@ -130,16 +129,6 @@
                                         </td>
 
                                         <td class="px-4 py-3 text-center align-top pt-4">
-                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle p-2" 
-                                                    data-bs-toggle="modal" data-bs-target="#modalFoto"
-                                                    data-foto="../assets/img_laporan/<?= htmlspecialchars($r['foto']) ?>"
-                                                    data-judul="Foto Bukti - <?= htmlspecialchars($r['nama']) ?>" 
-                                                    title="Lihat Foto Bukti">
-                                                <i class="ti ti-photo fs-5"></i>
-                                            </button>
-                                        </td>
-
-                                        <td class="px-4 py-3 text-center align-top pt-4">
                                             <span class="badge bg-success px-3 py-2 rounded-pill shadow-sm">
                                                 <i class="ti ti-check me-1"></i> Selesai
                                             </span>
@@ -148,7 +137,7 @@
                                 <?php endwhile; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="5" class="text-center py-5">
+                                    <td colspan="4" class="text-center py-5">
                                         <div class="py-4 opacity-50">
                                             <i class="ti ti-archive-off text-muted mb-3 d-block" style="font-size: 3rem;"></i>
                                             <span class="fw-bold text-muted fs-5">Tidak ada data riwayat laporan.</span>
@@ -168,28 +157,3 @@
 
     </div>
 </div>
-
-<div class="modal fade" id="modalFoto" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-light border-0">
-                <h5 class="modal-title fw-bold text-dark" id="judulFoto"><i class="ti ti-photo me-2 text-primary"></i>Bukti Laporan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center p-4 bg-white">
-                <img src="" id="tampilFoto" class="img-fluid rounded shadow-sm border" style="max-height: 70vh; object-fit: contain;" alt="Bukti Foto">
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var modalFoto = document.getElementById('modalFoto');
-        modalFoto.addEventListener('show.bs.modal', function(event) {
-            var btn = event.relatedTarget;
-            modalFoto.querySelector('#judulFoto').innerHTML = '<i class="ti ti-photo me-2 text-primary"></i>' + btn.getAttribute('data-judul');
-            modalFoto.querySelector('#tampilFoto').src = btn.getAttribute('data-foto');
-        });
-    });
-</script>

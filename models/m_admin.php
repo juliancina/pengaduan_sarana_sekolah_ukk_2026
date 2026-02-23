@@ -32,6 +32,7 @@ class m_admin extends Database {
             $where .= " AND t1.id_kategori = '{$filter['kategori']}'";
         }
 
+        // PERBAIKAN: Menambahkan s.kelas ke dalam query SELECT
         $query = "SELECT 
                     t1.id_pelaporan, 
                     t1.tgl_laporan, 
@@ -41,7 +42,8 @@ class m_admin extends Database {
                     t1.nis,
                     t2.status, 
                     t2.feedback, 
-                    s.nama, 
+                    s.nama,
+                    s.kelas, 
                     k.ket_kategori
                   FROM tb_input_aspirasi t1
                   LEFT JOIN tb_aspirasi t2 ON t1.id_pelaporan = t2.id_pelaporan

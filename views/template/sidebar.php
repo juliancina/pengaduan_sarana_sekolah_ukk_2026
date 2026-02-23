@@ -1,13 +1,12 @@
 <?php
 $p = isset($_GET['page']) ? $_GET['page'] : 'home';
-// Cek level user dari Session \\
 $level = isset($_SESSION['level']) ? $_SESSION['level'] : 'siswa'; 
 ?>
 
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
         <div class="m-header">
-            <a href="#" class="b-brand text-primary">
+            <a href="#" class="b-brand text-primary text-decoration-none">
                 <i class="ti ti-school text-white" style="font-size: 26px;"></i>
                 <span class="fw-bold fs-4 ms-2 text-white">E-Lapor</span>
             </a>
@@ -28,8 +27,8 @@ $level = isset($_SESSION['level']) ? $_SESSION['level'] : 'siswa';
 
                 <li class="pc-item <?= ($p=='verifikasi') ? 'active' : ''; ?>">
                     <a href="index.php?page=verifikasi" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-gavel"></i></span>
-                        <span class="pc-mtext">Verifikasi & Validasi</span>
+                        <span class="pc-micon"><i class="ti ti-checkbox"></i></span>
+                        <span class="pc-mtext">Verifikasi Laporan</span>
                     </a>
                 </li>
 
@@ -39,27 +38,25 @@ $level = isset($_SESSION['level']) ? $_SESSION['level'] : 'siswa';
                         <span class="pc-mtext">Riwayat Selesai</span>
                     </a>
                 </li>
-                
-                <li class="pc-item pc-caption"><label>PENGATURAN</label></li>
-                
-                <li class="pc-item <?= ($p=='admin_akun') ? 'active' : ''; ?>">
-                    <a href="index.php?page=admin_akun" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-user-cog"></i></span>
-                        <span class="pc-mtext">Profil Admin</span>
+
+                <li class="pc-item <?= ($p=='akun') ? 'active' : ''; ?>">
+                    <a href="index.php?page=akun" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-user-circle"></i></span>
+                        <span class="pc-mtext">Akun Saya</span>
                     </a>
                 </li>
 
                 <?php else: ?>
-                <li class="pc-item pc-caption"><label>UTAMA</label></li>
+                <li class="pc-item pc-caption"><label>MENU UTAMA</label></li>
                 
-                <li class="pc-item <?= ($p=='home' || $p=='siswa_dashboard') ? 'active' : ''; ?>">
+                <li class="pc-item <?= ($p=='home') ? 'active' : ''; ?>">
                     <a href="index.php?page=home" class="pc-link">
                         <span class="pc-micon"><i class="ti ti-home"></i></span>
                         <span class="pc-mtext">Home</span>
                     </a>
                 </li>
 
-                <li class="pc-item <?= $p=='akun' ? 'active' : ''; ?>">
+                <li class="pc-item <?= ($p=='akun') ? 'active' : ''; ?>">
                     <a href="index.php?page=akun" class="pc-link">
                         <span class="pc-micon"><i class="ti ti-user-circle"></i></span>
                         <span class="pc-mtext">Akun Saya</span>

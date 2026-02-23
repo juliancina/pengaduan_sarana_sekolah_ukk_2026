@@ -47,24 +47,27 @@ class c_admin {
                 include 'views/admin/v_verifikasi.php';
                 break;
 
-            // === LOGIC: PROSES TANGGAPAN (Perbaikan Bug Status) ===
-            case 'proses_tanggapan':
-                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                    $id  = $_POST['id_pelaporan'];
-                    $st  = $_POST['status'];
-                    $fb  = $_POST['feedback'];
-                    $adm = $_SESSION['id_admin']; 
+           // === LOGIC: PROSES TANGGAPAN (Perbaikan Bug Status) ===
+           case 'proses_tanggapan':
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $id  = $_POST['id_pelaporan'];
+                $st  = $_POST['status'];
+                
+                // PERBAIKAN BUG: Menyamakan dengan name="tanggapan" di form v_verifikasi
+                $fb  = isset($_POST['tanggapan']) ? $_POST['tanggapan'] : ''; 
+                
+                $adm = $_SESSION['id_admin']; 
 
-                    if ($this->model->proses_tanggapan($id, $st, $fb, $adm)) {
-                        echo "<script>alert('Berhasil Update Status!'); window.location='index.php?page=verifikasi';</script>";
-                    } else {
-                        echo "<script>alert('Gagal Update Database!'); window.location='index.php?page=verifikasi';</script>";
-                    }
+                if ($this->model->proses_tanggapan($id, $st, $fb, $adm)) {
+                    echo "<script>alert('Berhasil Update Status!'); window.location='index.php?page=verifikasi';</script>";
                 } else {
-                    // Jika diakses langsung tanpa POST, kembalikan ke verifikasi
-                    header("Location: index.php?page=verifikasi");
+                    echo "<script>alert('Gagal Update Database!'); window.location='index.php?page=verifikasi';</script>";
                 }
-                break;
+            } else {
+                // Jika diakses langsung tanpa POST, kembalikan ke verifikasi
+                header("Location: index.php?page=verifikasi");
+            }
+            break;
             
             // === LOGIC: HAPUS LAPORAN === \\
             case 'delete_laporan':

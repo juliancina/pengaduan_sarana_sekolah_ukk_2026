@@ -93,16 +93,16 @@
 
                                         <td class="px-4 py-3 align-top">
                                             <span class="badge bg-light text-dark border mb-2 px-2 py-1">
-                                                <i class="ti ti-category me-1 text-primary"></i>
+                                                <i class="ti ti-category me-1 text-primary"></i> 
                                                 <?= htmlspecialchars($row['ket_kategori']) ?>
                                             </span>
                                             <br>
-                                            <?php
-                                            $st_color = 'secondary';
-                                            $st_text = $row['status'] ? htmlspecialchars($row['status']) : 'Menunggu';
-                                            if ($st_text == 'Proses') $st_color = 'warning text-dark';
-                                            if ($st_text == 'Selesai') $st_color = 'success';
-                                            if ($st_text == 'Menunggu') $st_color = 'danger bg-opacity-10 text-danger border border-danger border-opacity-25';
+                                            <?php 
+                                                $st_color = 'secondary';
+                                                $st_text = $row['status'] ? htmlspecialchars($row['status']) : 'Menunggu';
+                                                if ($st_text == 'Proses') $st_color = 'warning text-dark';
+                                                if ($st_text == 'Selesai') $st_color = 'success';
+                                                if ($st_text == 'Menunggu') $st_color = 'danger bg-opacity-10 text-danger border border-danger border-opacity-25';
                                             ?>
                                             <span class="badge bg-<?= $st_color ?> px-2 py-1">
                                                 <i class="ti ti-loader me-1"></i> <?= $st_text ?>
@@ -116,41 +116,42 @@
                                             <div class="small text-muted mb-2">
                                                 <i class="ti ti-map-pin text-danger"></i> Lokasi: <?= htmlspecialchars($row['lokasi']) ?>
                                             </div>
-
-                                            <?php if (isset($row['feedback']) && $row['feedback'] != '' && $row['feedback'] != '-'): ?>
-                                                <div class="mt-2 p-2 bg-light border-start border-3 border-primary rounded-end small">
-                                                    <span class="fw-bold text-primary">Tanggapan saat ini:</span><br>
-                                                    <span class="text-muted"><?= htmlspecialchars($row['feedback']) ?></span>
-                                                </div>
+                                            
+                                            <?php if(isset($row['feedback']) && $row['feedback'] != '' && $row['feedback'] != '-'): ?>
+                                            <div class="mt-2 p-2 bg-light border-start border-3 border-primary rounded-end small">
+                                                <span class="fw-bold text-primary">Tanggapan saat ini:</span><br>
+                                                <span class="text-muted"><?= htmlspecialchars($row['feedback']) ?></span>
+                                            </div>
                                             <?php endif; ?>
                                         </td>
 
                                         <td class="px-4 py-3 text-center align-top">
                                             <div class="d-flex justify-content-center gap-1">
-                                                <button type="button" class="btn btn-sm btn-light border shadow-sm px-2"
-                                                    data-bs-toggle="modal" data-bs-target="#modalFoto"
-                                                    data-foto="../assets/img_laporan/<?= htmlspecialchars($row['foto']) ?>"
-                                                    data-judul="Foto Laporan - <?= htmlspecialchars($row['nama']) ?>"
-                                                    title="Lihat Bukti Foto">
+                                                
+                                                <button type="button" class="btn btn-sm btn-light border shadow-sm px-2" 
+                                                        data-bs-toggle="modal" data-bs-target="#modalFoto"
+                                                        data-foto="assets/img_laporan/<?= htmlspecialchars($row['foto']) ?>"
+                                                        data-judul="Foto Laporan - <?= htmlspecialchars($row['nama']) ?>"
+                                                        title="Lihat Bukti Foto">
                                                     <i class="ti ti-photo text-secondary fs-6"></i>
                                                 </button>
 
-                                                <button type="button" class="btn btn-sm btn-primary shadow-sm px-3"
-                                                    data-bs-toggle="modal" data-bs-target="#modalAct"
-                                                    data-id="<?= $row['id_pelaporan'] ?>"
-                                                    data-nama="<?= htmlspecialchars($row['nama']) ?>"
-                                                    data-ket="<?= htmlspecialchars($row['ket']) ?>"
-                                                    data-lokasi="<?= htmlspecialchars($row['lokasi']) ?>"
-                                                    data-status="<?= $row['status'] ?>"
-                                                    data-feedback="<?= htmlspecialchars($row['feedback'] ?? '') ?>"
-                                                    title="Beri Tanggapan & Ubah Status">
+                                                <button type="button" class="btn btn-sm btn-primary shadow-sm px-3" 
+                                                        data-bs-toggle="modal" data-bs-target="#modalAct"
+                                                        data-id="<?= $row['id_pelaporan'] ?>"
+                                                        data-nama="<?= htmlspecialchars($row['nama']) ?>"
+                                                        data-ket="<?= htmlspecialchars($row['ket']) ?>"
+                                                        data-lokasi="<?= htmlspecialchars($row['lokasi']) ?>"
+                                                        data-status="<?= $row['status'] ?>"
+                                                        data-feedback="<?= htmlspecialchars($row['feedback'] ?? '') ?>"
+                                                        title="Beri Tanggapan & Ubah Status">
                                                     <i class="ti ti-edit me-1"></i> Proses
                                                 </button>
 
-                                                <a href="index.php?page=hapus_laporan&id=<?= $row['id_pelaporan'] ?>"
-                                                    class="btn btn-sm btn-danger shadow-sm px-3"
-                                                    onclick="return confirm('Yakin ingin menghapus laporan ini? Data dan foto akan terhapus permanen!');"
-                                                    title="Hapus Laporan Permanen">
+                                                <a href="index.php?page=hapus_laporan&id=<?= $row['id_pelaporan'] ?>" 
+                                                   class="btn btn-sm btn-danger shadow-sm px-3" 
+                                                   onclick="return confirm('Yakin ingin menghapus laporan ini? Data dan foto akan terhapus permanen!');"
+                                                   title="Hapus Laporan Permanen">
                                                     <i class="ti ti-trash me-1"></i> Hapus
                                                 </a>
                                             </div>
@@ -201,7 +202,7 @@
                 <h5 class="modal-title fw-bold"><i class="ti ti-edit me-2"></i>Tanggapi Laporan</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
+            
             <form action="index.php?page=proses_tanggapan" method="POST">
                 <div class="modal-body p-4">
                     <input type="hidden" name="id_pelaporan" id="id_pelaporan">
@@ -252,14 +253,13 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-
+        
         var selectStatus = document.getElementById('select_status');
         var textareaTanggapan = document.getElementById('textarea_tanggapan');
 
         // Fungsi Auto-fill Berdasarkan Status Dropdown
         selectStatus.addEventListener('change', function() {
             var val = this.value;
-            // Jika kolom teks masih kosong atau berisi teks default sebelumnya, baru kita timpa
             if (val === 'Proses') {
                 textareaTanggapan.value = 'Laporan sedang kami tindak lanjuti dan dalam tahap proses penyelesaian.';
             } else if (val === 'Selesai') {
@@ -273,7 +273,7 @@
         var modalAct = document.getElementById('modalAct');
         modalAct.addEventListener('show.bs.modal', function(event) {
             var btn = event.relatedTarget;
-
+            
             // Isi data
             document.getElementById('id_pelaporan').value = btn.getAttribute('data-id');
             document.getElementById('label_nama').innerText = btn.getAttribute('data-nama');
@@ -298,17 +298,15 @@
             }
         });
 
-        // B. Script Modal Foto
+        // PERBAIKAN: Script Modal Foto
         var modalFoto = document.getElementById('modalFoto');
         modalFoto.addEventListener('show.bs.modal', function(event) {
             var button = event.relatedTarget;
             var fotoFile = button.getAttribute('data-foto');
             var judul = button.getAttribute('data-judul');
 
-            modalFoto.querySelector('#judulFoto').textContent = judul;
-
-            // Tambahkan path folder assets/img_laporan/ agar sistem tahu lokasi filenya
-            modalFoto.querySelector('#tampilFoto').src = 'assets/img_laporan/' + fotoFile;
+            modalFoto.querySelector('#judulFoto').innerHTML = '<i class="ti ti-photo me-2 text-primary"></i>' + judul;
+            modalFoto.querySelector('#tampilFoto').src = fotoFile;
         });
     });
 </script>

@@ -1,5 +1,6 @@
 </div> 
 </div> 
+
 <footer class="pc-footer">
     <div class="footer-wrapper container-fluid">
         <div class="row">
@@ -19,27 +20,19 @@
 <script src="assets/js/plugins/feather.min.js"></script>
 
 <script>
-    // Script tambahan untuk toggle sidebar di mobile
+    // Script bawaan untuk toggle sidebar di mobile
     document.addEventListener('DOMContentLoaded', function() {
         var toggleBtn = document.querySelector('#mobile-collapse');
         var sidebar = document.querySelector('.pc-sidebar');
-        var sidebarHideBtn = document.querySelector('#sidebar-hide');
 
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', function() {
+        if (toggleBtn && sidebar) {
+            toggleBtn.addEventListener('click', function(e) {
+                e.preventDefault(); // Mencegah pindah halaman saat diklik
                 sidebar.classList.toggle('mob-sidebar-active');
-            });
-        }
-        if (sidebarHideBtn) {
-            sidebarHideBtn.addEventListener('click', function() {
-                if (window.innerWidth >= 1025) {
-                    sidebar.classList.toggle('pc-sidebar-hide');
-                } else {
-                    sidebar.classList.remove('mob-sidebar-active');
-                }
             });
         }
     });
 </script>
+
 </body>
 </html>
